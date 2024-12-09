@@ -1,42 +1,44 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { LoginForm } from './components/LoginForm';
-import { SignupForm } from './components/SignupForm';
-import { CarsPage } from './pages/CarsPage';
-import { SearchPage } from './pages/SearchPage';
-import { useAuthStore } from './store/authStore';
-
-const queryClient = new QueryClient();
-
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
-};
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Cars from './pages/Cars';
+import CarDetails from './pages/CarDetails';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import PrivateRoute from './components/PrivateRoute';
+import Bookings from './pages/Bookings';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      <AuthProvider>
         <Router>
           <div className="min-h-screen bg-gray-50">
             <Navbar />
             <Routes>
-              <Route path="/" element={<Hero />} />
-              <Route path="/cars" element={<CarsPage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/signup" element={<SignupForm />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/cars" element={<Cars />} />
+              <Route path="/cars/:id" element={<CarDetails />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/bookings"
+                element={
+                  <PrivateRoute>
+                    <Bookings />
+                  </PrivateRoute>
+                }
+              />
             </Routes>
             <Toaster position="top-right" />
           </div>
         </Router>
-      </GoogleOAuthProvider>
-    </QueryClientProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

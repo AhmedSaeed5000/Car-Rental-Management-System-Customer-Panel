@@ -29,7 +29,7 @@ app.use('/auth', authRoutes);
 app.use('/cars', carRoutes);
 app.use('/branch', branchRoutes);
 app.use('/category', categoryRoutes);
-app.use('/bookings', bookingRoutes);
+app.use('/booking', bookingRoutes);
 
 
 

@@ -4,11 +4,10 @@ const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 
 // Load environment variables
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Initialize Google OAuth Client
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: Generate JWT
 const generateToken = (user) => {
@@ -78,10 +77,11 @@ exports.googleLogin = async (req, res) => {
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({
       idToken: googleToken,
-      audience: GOOGLE_CLIENT_ID,
+      audience: process.env.GOOGLE_CLIENT_ID, // Correct way to pass client ID
     });
 
-    const { email, given_name, family_name } = ticket.getPayload();
+    const payload = ticket.getPayload();
+    const { email, given_name, family_name } = payload;
 
     // Check if user already exists
     let user = await User.findOne({ email });
@@ -102,6 +102,7 @@ exports.googleLogin = async (req, res) => {
 
     res.status(200).json({ token, user });
   } catch (error) {
+    console.error('Google login error:', error);
     res.status(500).json({ message: 'Google login failed', error: error.message });
   }
 };

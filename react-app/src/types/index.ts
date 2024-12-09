@@ -1,34 +1,46 @@
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  token?: string;
+}
+
 export interface Car {
   _id: string;
   make: string;
   model: string;
   year: number;
-  category: Category;
-  branch: Branch;
-  licensePlate: string;
   dailyRate: number;
   status: 'available' | 'rented' | 'maintenance';
-  features: string[];
   images: string[];
-  mileage: number;
+  category: {
+    _id: string;
+    name: string;
+  };
   transmission: string;
+  features: string[];
 }
 
-export interface Category {
+export interface Booking {
   _id: string;
-  name: string;
+  car: Car;
+  startDate: string;
+  endDate: string;
+  totalAmount: number;
+  status: string;
+  paymentMethod: 'cash payment' | 'stripe';
 }
 
 export interface Branch {
   _id: string;
   name: string;
-  location: string;
-}
-
-export interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
+  address: string;
+  city: string;
+  contactNumber: string;
   email: string;
-  role: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
 }

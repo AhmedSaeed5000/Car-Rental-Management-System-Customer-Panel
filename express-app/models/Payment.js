@@ -5,7 +5,7 @@ const paymentSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   paymentMethod: {
     type: String,
-    enum: ['stripe', 'paypal', 'cash'],
+    enum: ['stripe', 'paypal', 'cash payment'],
     required: true
   },
   stripePaymentIntentId: String,
