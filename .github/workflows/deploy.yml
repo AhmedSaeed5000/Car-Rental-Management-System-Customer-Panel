@@ -13,11 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Ensure Docker is running with elevated privileges
-      - name: Start Docker Service
+      # 2. Check Docker installation
+      - name: Verify Docker is running
         run: |
-          Start-Service docker
-        shell: powershell
+          docker version || (echo "Docker is not running. Ensure Docker is installed and the service is started on the runner machine." && exit 1)
+        shell: bash
 
       # 3. Build your Express backend image
       - name: Build backend image
@@ -40,7 +40,7 @@ jobs:
       # 5. Log in to Docker Hub securely
       - name: Docker Hub login
         run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         shell: bash
 
       # 6. Push both images up to your Docker Hub repo
