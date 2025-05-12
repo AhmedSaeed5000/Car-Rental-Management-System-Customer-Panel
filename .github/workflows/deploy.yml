@@ -13,60 +13,56 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Check Docker installation
-      - name: Verify Docker is running
-        run: |
-          docker version || (echo "Docker is not running. Ensure Docker is installed and the service is started on the runner machine." && exit 1)
-        shell: bash
-
-      # 3. Build your Express backend image
+      # 2. Build your Express backend image
       - name: Build backend image
+        shell: bash
         run: |
           docker build \
             --no-cache \
             -t elitron/car-rental-backend \
             ./express-app
-        shell: bash
 
-      # 4. Build your React frontend image
+      # 3. Build your React frontend image
       - name: Build frontend image
+        shell: bash
         run: |
           docker build \
             --no-cache \
             -t elitron/car-rental-frontend \
             ./react-app
-        shell: bash
 
-      # 5. Log in to Docker Hub securely
+      # 4. Log in to Docker Hub securely
       - name: Docker Hub login
+        shell: bash
         run: |
           echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        shell: bash
 
-      # 6. Push both images up to your Docker Hub repo
+      # 5. Push both images up to your Docker Hub repo
       - name: Push backend image
+        shell: bash
         run: docker push elitron/car-rental-backend
 
       - name: Push frontend image
+        shell: bash
         run: docker push elitron/car-rental-frontend
 
-      # 7. Deploy MongoDB manifests
+      # 6. Deploy MongoDB manifests
       - name: Deploy MongoDB
+        shell: bash
         run: |
           kubectl apply -f mongo-deployment.yaml -n car-rental
           kubectl apply -f mongo-service.yaml -n car-rental
-        shell: bash
 
-      # 8. Deploy the Express backend
+      # 7. Deploy the Express backend
       - name: Deploy Express backend
+        shell: bash
         run: |
           kubectl apply -f express-app/deployment.yaml -n car-rental
           kubectl apply -f express-app/service.yaml -n car-rental
-        shell: bash
 
-      # 9. Deploy the React frontend
+      # 8. Deploy the React frontend
       - name: Deploy React frontend
+        shell: bash
         run: |
           kubectl apply -f react-app/deployment.yaml -n car-rental
           kubectl apply -f react-app/service.yaml -n car-rental
-        shell: bash
