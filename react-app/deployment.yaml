@@ -15,9 +15,6 @@ spec:
       containers:
         - name: react-app
           image: elitron/car-rental-frontend
-          # env:
-          #   - name: VITE_API_URL
-          #     value: "http://express-app:3000"
           ports:
             - containerPort: 5173
           readinessProbe:
