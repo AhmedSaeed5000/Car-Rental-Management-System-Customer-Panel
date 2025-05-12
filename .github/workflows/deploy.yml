@@ -15,54 +15,48 @@ jobs:
 
       # 2. Build your Express backend image
       - name: Build backend image
-        shell: bash
+        shell: powershell
         run: |
-          docker build \
-            --no-cache \
-            -t elitron/car-rental-backend \
-            ./express-app
+          docker build --no-cache -t elitron/car-rental-backend ./express-app
 
       # 3. Build your React frontend image
       - name: Build frontend image
-        shell: bash
+        shell: powershell
         run: |
-          docker build \
-            --no-cache \
-            -t elitron/car-rental-frontend \
-            ./react-app
+          docker build --no-cache -t elitron/car-rental-frontend ./react-app
 
       # 4. Log in to Docker Hub securely
       - name: Docker Hub login
-        shell: bash
+        shell: powershell
         run: |
           echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       # 5. Push both images up to your Docker Hub repo
       - name: Push backend image
-        shell: bash
+        shell: powershell
         run: docker push elitron/car-rental-backend
 
       - name: Push frontend image
-        shell: bash
+        shell: powershell
         run: docker push elitron/car-rental-frontend
 
       # 6. Deploy MongoDB manifests
       - name: Deploy MongoDB
-        shell: bash
+        shell: powershell
         run: |
           kubectl apply -f mongo-deployment.yaml -n car-rental
           kubectl apply -f mongo-service.yaml -n car-rental
 
       # 7. Deploy the Express backend
       - name: Deploy Express backend
-        shell: bash
+        shell: powershell
         run: |
           kubectl apply -f express-app/deployment.yaml -n car-rental
           kubectl apply -f express-app/service.yaml -n car-rental
 
       # 8. Deploy the React frontend
       - name: Deploy React frontend
-        shell: bash
+        shell: powershell
         run: |
           kubectl apply -f react-app/deployment.yaml -n car-rental
           kubectl apply -f react-app/service.yaml -n car-rental
