@@ -23,6 +23,7 @@ jobs:
       - name: Build backend image
         run: |
           docker build \
+            --no-cache \
             -t elitron/car-rental-backend \
             ./express-app
         shell: bash
@@ -31,13 +32,15 @@ jobs:
       - name: Build frontend image
         run: |
           docker build \
+            --no-cache \
             -t elitron/car-rental-frontend \
             ./react-app
         shell: bash
 
-      # 5. Log in to Docker Hub
+      # 5. Log in to Docker Hub securely
       - name: Docker Hub login
-        run-as-admin: docker login
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         shell: bash
 
       # 6. Push both images up to your Docker Hub repo
@@ -58,7 +61,7 @@ jobs:
       - name: Deploy Express backend
         run: |
           kubectl apply -f express-app/deployment.yaml -n car-rental
-          kubectl apply -f express-app/service.yaml
+          kubectl apply -f express-app/service.yaml -n car-rental
         shell: bash
 
       # 9. Deploy the React frontend
