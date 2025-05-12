@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: express-app
+  template:
+    metadata:
+      labels:
+        app: express-app
+    spec:
+      containers:
+        - name: express-app
+          image: elitron/car-rental-backend
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/carrentaldb"
+            - name: PORT
+              value: "3000"
+            - name: JWT_SECRET
+              value: "WONT_TELL_U_LOL"
+            - name: GOOGLE_CLIENT_ID
+              value: "400212168887-l5kqc8rglhc6hrpe294uhcakcjaarpnf.apps.googleusercontent.com"
+            - name: CARXE_API_KEY
+              value: "tgbukfna7_51mp52od4_nn71acgp8"
+            - name: SMTP_HOST
+              value: "smtp.gmail.com"
+            - name: SMTP_PORT
+              value: "465"
+            - name: SMTP_SECURE
+              value: "true"
+            - name: SMTP_USER
+              value: "randomcarrentals@gmail.com"
+            - name: SMTP_PASS
+              value: "duvyrapbljminmqf"
+            - name: SMTP_FROM
+              value: "randomcarrentals@gmail.com"
+            - name: STRIPE_SECRET_KEY
+              value: "sk_test_51QTkQmDZlizXk7LkgECGfcn3FARXrIRgRXqD9hKo2Pmd6doBTKIomD4ZbHCirED1Zw8G6lX9O3Yu4caijspedeUq00CdYcvnDd"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10

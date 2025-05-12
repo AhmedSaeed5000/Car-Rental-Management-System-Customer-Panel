@@ -1,0 +1,57 @@
+name: Build & Deploy to Minikube
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      # 1. Get the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Build your Express backend image
+      - name: Build backend image
+        run: |
+          docker build \
+            -t elitron/car-rental-backend \
+            ./express-app
+
+      # 3. Build your React frontend image
+      - name: Build frontend image
+        run: |
+          docker build \
+            -t elitron/car-rental-frontend \
+            ./react-app
+
+      # 4. Log in to Docker Hub
+      - name: Docker Hub login
+        run: docker login
+
+      # 5. Push both images up to your Docker Hub repo
+      - name: Push backend image
+        run: docker push elitron/car-rental-backend
+
+      - name: Push frontend image
+        run: docker push elitron/car-rental-frontend
+
+      # 6. Deploy MongoDB manifests
+      - name: Deploy MongoDB
+        run: |
+          kubectl apply -f mongo-deployment.yaml
+          kubectl apply -f mongo-service.yaml
+
+      # 7. Deploy the Express backend
+      - name: Deploy Express backend
+        run: |
+          kubectl apply -f express-app/deployment.yaml
+          kubectl apply -f express-app/service.yaml
+
+      # 8. Deploy the React frontend
+      - name: Deploy React frontend
+        run: |
+          kubectl apply -f react-app/deployment.yaml
+          kubectl apply -f react-app/service.yaml

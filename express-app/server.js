@@ -31,6 +31,9 @@ app.use('/branch', branchRoutes);
 app.use('/category', categoryRoutes);
 app.use('/booking', bookingRoutes);
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 
 // Connect to the database and start the server
