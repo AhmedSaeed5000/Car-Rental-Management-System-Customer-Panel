@@ -8,52 +8,66 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 1. Checkout code
-      - name: Checkout repository
+      # 1. Get the code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Set up Docker Buildx (Windows-compatible)
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # 2. Build your Express backend image
+      - name: Build backend image
+        shell: powershell
+        run: |
+          docker build --no-cache -t elitron/car-rental-backend ./express-app
 
-      # 3. (Optional) Enable QEMU for cross-platform builds
-      - name: Set up QEMU emulation
-        uses: docker/setup-qemu-action@v2
+      # 3. Build your React frontend image
+      - name: Build frontend image
+        shell: powershell
+        run: |
+          docker build --no-cache -t elitron/car-rental-frontend ./react-app
 
-      # 4. Log in to Docker Hub
+      # 4. Log in to Docker Hub securely
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      # 5. Build & Push Backend Image (multi-platform)
-      - name: Build and push backend image
-        shell: pwsh
+      # 5. Push backend image (with explicit platform)
+      - name: Push backend image
+        shell: powershell
         run: |
           docker buildx build `
-            --platform linux/amd64,linux/arm64/v8 `
-            -t ${{ secrets.DOCKER_USERNAME }}/car-rental-backend:latest `
+            --platform linux/amd64 `
+            -t elitron/car-rental-backend:latest `
             --push `
             ./express-app
 
-      # 6. Build & Push Frontend Image (multi-platform)
-      - name: Build and push frontend image
-        shell: pwsh
+      # 6. Push frontend image (with explicit platform)
+      - name: Push frontend image
+        shell: powershell
         run: |
           docker buildx build `
-            --platform linux/amd64,linux/arm64/v8 `
-            -t ${{ secrets.DOCKER_USERNAME }}/car-rental-frontend:latest `
+            --platform linux/amd64 `
+            -t elitron/car-rental-frontend:latest `
             --push `
             ./react-app
 
-      # 7. Deploy Kubernetes manifests (unchanged)
-      - name: Deploy to cluster
-        shell: pwsh
+      # 7. Deploy MongoDB manifests
+      - name: Deploy MongoDB
+        shell: powershell
         run: |
           kubectl apply -f mongo-deployment.yaml -n car-rental
-          kubectl apply -f mongo-service.yaml    -n car-rental
+          kubectl apply -f mongo-service.yaml -n car-rental
+
+      # 8. Deploy the Express backend
+      - name: Deploy Express backend
+        shell: powershell
+        run: |
           kubectl apply -f express-app/deployment.yaml -n car-rental
-          kubectl apply -f express-app/service.yaml    -n car-rental
-          kubectl apply -f react-app/deployment.yaml   -n car-rental
-          kubectl apply -f react-app/service.yaml      -n car-rental
+          kubectl apply -f express-app/service.yaml -n car-rental
+
+      # 9. Deploy the React frontend
+      - name: Deploy React frontend
+        shell: powershell
+        run: |
+          kubectl apply -f react-app/deployment.yaml -n car-rental
+          kubectl apply -f react-app/service.yaml -n car-rental
