@@ -23,25 +23,25 @@ spec:
             - name: PORT
               value: "3000"
             - name: JWT_SECRET
-              value: "WONT_TELL_U_LOL"
+              value: "_"
             - name: GOOGLE_CLIENT_ID
-              value: "400212168887-l5kqc8rglhc6hrpe294uhcakcjaarpnf.apps.googleusercontent.com"
+              value: "_"
             - name: CARXE_API_KEY
-              value: "tgbukfna7_51mp52od4_nn71acgp8"
+              value: "_"
             - name: SMTP_HOST
-              value: "smtp.gmail.com"
+              value: "_"
             - name: SMTP_PORT
-              value: "465"
+              value: "_"
             - name: SMTP_SECURE
-              value: "true"
+              value: "_"
             - name: SMTP_USER
-              value: "randomcarrentals@gmail.com"
+              value: "_"
             - name: SMTP_PASS
-              value: "duvyrapbljminmqf"
+              value: "_"
             - name: SMTP_FROM
-              value: "randomcarrentals@gmail.com"
+              value: "_"
             - name: STRIPE_SECRET_KEY
-              value: "sk_test_51QTkQmDZlizXk7LkgECGfcn3FARXrIRgRXqD9hKo2Pmd6doBTKIomD4ZbHCirED1Zw8G6lX9O3Yu4caijspedeUq00CdYcvnDd"
+              value: "_"
           readinessProbe:
             httpGet:
               path: /health
